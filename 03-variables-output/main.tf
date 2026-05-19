@@ -32,8 +32,8 @@ resource "aws_vpc" "New_VPC" {
 }
 
 resource "aws_subnet" "public_subnet" {
-  vpc_id     = aws_vpc.New_VPC.id
-  cidr_block = var.subnet_cidr
+  vpc_id                  = aws_vpc.New_VPC.id
+  cidr_block              = var.subnet_cidr
   map_public_ip_on_launch = true
 
   tags = {
