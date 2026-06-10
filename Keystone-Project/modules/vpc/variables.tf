@@ -7,11 +7,14 @@ variable "cidr_block" {
 variable "name" {
   description = "Name of the vpc"
   type        = string
-  default     = ""
 }
 
-variable "public_subnet" {
+variable "public_cidrs" {
   description = "Cidr of my public subnet/s"
   type = list(string)
-  default = [ "","" ]
+}
+
+variable "private_cidrs" {
+  description = "Cidr of my private subnet/s"
+  type = list(string)
 }
