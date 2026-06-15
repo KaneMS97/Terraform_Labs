@@ -35,7 +35,7 @@ resource "aws_flow_log" "main_log" {
 }
 
 resource "aws_cloudwatch_log_group" "log_location" {
-  name = loglocation
+  name = "loglocation"
   retention_in_days = 365
 }
 
