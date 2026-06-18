@@ -7,3 +7,6 @@ module "vpc" {
   private_cidrs = ["10.0.3.0/24","10.0.4.0/24"]
 
 }
+module "kms" {
+  source = "./modules/kms"
+}
