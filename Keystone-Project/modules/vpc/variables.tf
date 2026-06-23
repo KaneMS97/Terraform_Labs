@@ -11,10 +11,10 @@ variable "name" {
 
 variable "public_cidrs" {
   description = "Cidr of my public subnet/s"
-  type = list(string)
+  type        = list(string)
 }
 
 variable "private_cidrs" {
   description = "Cidr of my private subnet/s"
-  type = list(string)
+  type        = list(string)
 }

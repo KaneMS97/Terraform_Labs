@@ -71,7 +71,7 @@ data "aws_iam_policy_document" "flow_log_permission" {
 }
 
 resource "aws_iam_role_policy" "flow_log_iam_policy" {
-  name = "test"
+  name = "flow-log-cloudwatch-permissions"
   role = aws_iam_role.flow_log_role.id
   policy = data.aws_iam_policy_document.flow_log_permission.json
 }

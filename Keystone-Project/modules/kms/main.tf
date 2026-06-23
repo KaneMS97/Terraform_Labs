@@ -11,11 +11,11 @@ resource "aws_kms_key" "s3_key" {
 }
 
 resource "aws_kms_alias" "cloud_trail_alias" {
-  name = "alias/cloud-trail-key-alias"
+  name          = "alias/cloud-trail-key-alias"
   target_key_id = aws_kms_key.cloud_trail_key.key_id
 }
 
 resource "aws_kms_alias" "s3_key_alias" {
-  name = "alias/s3-key-alias"
+  name          = "alias/s3-key-alias"
   target_key_id = aws_kms_key.s3_key.key_id
 }
