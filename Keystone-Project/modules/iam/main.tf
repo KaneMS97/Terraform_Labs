@@ -9,18 +9,21 @@ resource "aws_iam_account_password_policy" "password_policy" {
   password_reuse_prevention      = 4
 }
 
-resource "aws_iam_policy" "require mfa" {
-
+data "aws_iam_policy_document" "mfa_policy" {
+statement {
+  effect = "Allow"
+  actions = [  "iam:GetUser", "iam:CreateVirtualMFADevice", "iam:ListMFADevices","iam:ResyncMFADevice","iam:DeleteVirtualMFADevice","iam:EnableMFADevice"]
+  resources = []
 }
 
-data "aws_iam_policy_document" "trust_policy" {
-
-}
-
-resource "aws_iam_role" "trust_policy_role" {
-  assume_role_policy = data.aws_iam_policy_document.trust_policy
-}
-
-resource "aws_iam_role_policy_attachment" "name" {
-
+  statement {
+    effect = "Deny"
+    not_actions = ["iam:GetUser", "iam:CreateVirtualMFADevice", "iam:ListMFADevices","iam:ResyncMFADevice","iam:DeleteVirtualMFADevice","iam:EnableMFADevice"]
+    resources = ["*"]
+    condition {
+      test = "ForAnyValue:StringEquals"
+      variable = "aws:MultiFactorAuthPresent"
+      values = ["true"]
+    }
+  }
 }
