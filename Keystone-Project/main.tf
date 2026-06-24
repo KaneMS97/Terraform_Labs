@@ -10,3 +10,9 @@ module "vpc" {
 module "kms" {
   source = "./modules/kms"
 }
+
+module "iam" {
+  source     = "./modules/iam"
+  name       = ""
+  account_id = ""
+}

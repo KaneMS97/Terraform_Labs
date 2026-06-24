@@ -10,20 +10,35 @@ resource "aws_iam_account_password_policy" "password_policy" {
 }
 
 data "aws_iam_policy_document" "mfa_policy" {
-statement {
-  effect = "Allow"
-  actions = [  "iam:GetUser", "iam:CreateVirtualMFADevice", "iam:ListMFADevices","iam:ResyncMFADevice","iam:DeleteVirtualMFADevice","iam:EnableMFADevice"]
-  resources = []
-}
+  statement {
+    effect  = "Allow"
+    actions = ["iam:GetUser", "iam:CreateVirtualMFADevice", "iam:ListMFADevices", "iam:ResyncMFADevice", "iam:DeleteVirtualMFADevice", "iam:EnableMFADevice"]
+    resources = ["arn:aws:iam::${var.account_id}:user/$${aws:username}",
+    "arn:aws:iam::${var.account_id}:mfa/$${aws:username}"]
+  }
 
   statement {
-    effect = "Deny"
-    not_actions = ["iam:GetUser", "iam:CreateVirtualMFADevice", "iam:ListMFADevices","iam:ResyncMFADevice","iam:DeleteVirtualMFADevice","iam:EnableMFADevice"]
-    resources = ["*"]
+    effect      = "Deny"
+    not_actions = ["iam:GetUser", "iam:CreateVirtualMFADevice", "iam:ListMFADevices", "iam:ResyncMFADevice", "iam:DeleteVirtualMFADevice", "iam:EnableMFADevice"]
+    resources   = ["*"]
     condition {
-      test = "ForAnyValue:StringEquals"
+      test     = "BoolIfExists"
       variable = "aws:MultiFactorAuthPresent"
-      values = ["true"]
+      values   = ["false"]
     }
   }
+}
+
+resource "aws_iam_group" "all_users" {
+  name = "all-users"
+}
+
+resource "aws_iam_policy" "mfa_group_policy" {
+  name   = "my-mfa-policy"
+  policy = data.aws_iam_policy_document.mfa_policy.json
+}
+
+resource "aws_iam_group_policy_attachment" "name" {
+  group      = aws_iam_group.all_users.name
+  policy_arn = aws_iam_policy.mfa_group_policy.arn
 }
