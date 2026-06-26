@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "cloud_trail_bucket" {
-  bucket = "cloudtrail-bucket"
+  bucket = "cloudtrail-bucket-${var.account_id}"
 }
 
 resource "aws_s3_bucket_public_access_block" "cloudtrail_s3_block" {
@@ -16,10 +16,7 @@ resource "aws_s3_bucket_versioning" "cloudtrail_s3_versioning" {
     status = "Enabled"
   }
 }
-resource "aws_kms_key" "cloudtrail_key" {
-  description = "This key is used to encrypt my s3 bucket"
-  deletion_window_in_days = 10
-}
+
 resource "aws_s3_bucket_server_side_encryption_configuration" "cloudtrail_s3_encryption" {
   bucket = aws_s3_bucket.cloud_trail_bucket.id
 
@@ -28,5 +25,24 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "cloudtrail_s3_enc
       kms_master_key_id = var.kms_key_arn
       sse_algorithm = "aws:kms"
     }
+  }
+}
+
+resource "aws_s3_bucket_policy" "cloud_trail_s3_policy" {
+  bucket = aws_s3_bucket.cloud_trail_bucket.id
+  policy = data.aws_iam_policy_document.allow_cloudtrail_access.json
+
+}
+
+data "aws_iam_policy_document" "allow_cloudtrail_access" {
+  statement {
+    actions = 
+    principals {
+      
+    }
+  }
+
+  statement {
+    
   }
 }
