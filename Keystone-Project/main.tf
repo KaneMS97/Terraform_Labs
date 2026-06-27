@@ -31,3 +31,8 @@ module "securityhub" {
   source     = "./modules/securityhub"
   depends_on = [module.guardduty]
 }
+
+module "alerting" {
+  source = "./modules/alerting"
+  email = "example@hotmail.com"
+}
