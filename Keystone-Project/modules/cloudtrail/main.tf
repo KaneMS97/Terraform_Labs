@@ -76,6 +76,12 @@ data "aws_iam_policy_document" "allow_cloudtrail_access" {
   }
 }
 
-resource "aws_cloudtrail" "main_cloud_trail" {
-  
+resource "aws_cloudtrail" "landing_zone_trail" {
+  depends_on = [ aws_s3_bucket_policy.cloud_trail_s3_policy ]
+  name = "landing_zone_trail"
+  s3_bucket_name = aws_s3_bucket.cloud_trail_bucket.id
+  is_multi_region_trail = true
+  include_global_service_events = true
+  enable_log_file_validation = true
+  kms_key_id = var.kms_key_arn
 }
