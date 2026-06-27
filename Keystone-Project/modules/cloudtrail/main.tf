@@ -34,15 +34,44 @@ resource "aws_s3_bucket_policy" "cloud_trail_s3_policy" {
 
 }
 
+data "aws_region" "current" {
+  
+}
+
 data "aws_iam_policy_document" "allow_cloudtrail_access" {
-  statement {
-    actions = 
+  statement { 
+    effect = "Allow"
     principals {
-      
+        type = "Service"
+        identifiers = ["cloudtrail.amazonaws.com"]
+    }
+    actions = ["s3:GetBucketAcl"]
+    resources = ["arn:aws:s3:::${aws_s3_bucket.cloud_trail_bucket.id}"]
+    condition {
+      test = "StringEquals"
+      variable = "aws:SourceArn"
+      values = ["arn:aws:cloudtrail:${data.aws_region.current}:${var.account_id}:trail/landing-zone-trail"]
+
     }
   }
 
   statement {
-    
+    effect = "Allow"
+    principals {
+      type = "Service"
+      identifiers = ["cloudtrail.amazonaws.com"]
+    }
+    actions = ["s3:PutObject" ]
+    resources = ["arn:aws:s3:::${aws_s3_bucket.cloud_trail_bucket.id}/AWSLogs/${var.account_id}/*"]
+    condition {
+      test = "StringEquals"
+      variable = "s3:x-amz-server-side-encryption"
+      values = ["aws:kms"]
+    }
+    condition {
+      test = "StringEquals"
+      variable = "aws:SourceArn"
+      values = [ "arn:aws:cloudtrail:${data.aws_region.current.name}:${var.account_id}:trail/landing-zone-trail" ]
+    }
   }
 }
