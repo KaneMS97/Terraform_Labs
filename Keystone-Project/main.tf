@@ -16,3 +16,9 @@ module "iam" {
   name       = ""
   account_id = ""
 }
+
+module "cloudtrail" {
+  source      = "./modules/cloudtrail"
+  account_id  = "your-account-id"
+  kms_key_arn = module.kms.cloud_trail_kms_key_arn
+}
