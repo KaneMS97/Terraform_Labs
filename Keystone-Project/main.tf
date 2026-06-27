@@ -26,3 +26,8 @@ module "cloudtrail" {
 module "guardduty" {
   source = "./modules/guardduty"
 }
+
+module "securityhub" {
+  source     = "./modules/securityhub"
+  depends_on = [module.guardduty]
+}
