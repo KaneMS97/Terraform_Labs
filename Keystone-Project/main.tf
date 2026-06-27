@@ -22,3 +22,7 @@ module "cloudtrail" {
   account_id  = "your-account-id"
   kms_key_arn = module.kms.cloud_trail_kms_key_arn
 }
+
+module "guardduty" {
+  source = "./modules/guardduty"
+}
