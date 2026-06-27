@@ -50,7 +50,7 @@ data "aws_iam_policy_document" "allow_cloudtrail_access" {
     condition {
       test = "StringEquals"
       variable = "aws:SourceArn"
-      values = ["arn:aws:cloudtrail:${data.aws_region.current}:${var.account_id}:trail/landing-zone-trail"]
+      values = ["arn:aws:cloudtrail:${data.aws_region.current.region}:${var.account_id}:trail/landing-zone-trail"]
 
     }
   }
@@ -71,7 +71,11 @@ data "aws_iam_policy_document" "allow_cloudtrail_access" {
     condition {
       test = "StringEquals"
       variable = "aws:SourceArn"
-      values = [ "arn:aws:cloudtrail:${data.aws_region.current.name}:${var.account_id}:trail/landing-zone-trail" ]
+      values = [ "arn:aws:cloudtrail:${data.aws_region.current.region}:${var.account_id}:trail/landing-zone-trail" ]
     }
   }
+}
+
+resource "aws_cloudtrail" "main_cloud_trail" {
+  
 }
