@@ -2,7 +2,7 @@ resource "aws_securityhub_account" "securityhub_account" {
 }
 
 data "aws_region" "current" {
-  
+
 }
 
 resource "aws_securityhub_standards_subscription" "cis" {

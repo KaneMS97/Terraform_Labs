@@ -3,11 +3,11 @@ resource "aws_s3_bucket" "cloud_trail_bucket" {
 }
 
 resource "aws_s3_bucket_public_access_block" "cloudtrail_s3_block" {
-  bucket = aws_s3_bucket.cloud_trail_bucket.id
-  block_public_acls = true
-block_public_policy = true
-ignore_public_acls = true
-restrict_public_buckets = true
+  bucket                  = aws_s3_bucket.cloud_trail_bucket.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 resource "aws_s3_bucket_versioning" "cloudtrail_s3_versioning" {
@@ -23,7 +23,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "cloudtrail_s3_enc
   rule {
     apply_server_side_encryption_by_default {
       kms_master_key_id = var.kms_key_arn
-      sse_algorithm = "aws:kms"
+      sse_algorithm     = "aws:kms"
     }
   }
 }
@@ -35,22 +35,21 @@ resource "aws_s3_bucket_policy" "cloud_trail_s3_policy" {
 }
 
 data "aws_region" "current" {
-  
 }
 
 data "aws_iam_policy_document" "allow_cloudtrail_access" {
-  statement { 
+  statement {
     effect = "Allow"
     principals {
-        type = "Service"
-        identifiers = ["cloudtrail.amazonaws.com"]
+      type        = "Service"
+      identifiers = ["cloudtrail.amazonaws.com"]
     }
-    actions = ["s3:GetBucketAcl"]
+    actions   = ["s3:GetBucketAcl"]
     resources = ["arn:aws:s3:::${aws_s3_bucket.cloud_trail_bucket.id}"]
     condition {
-      test = "StringEquals"
+      test     = "StringEquals"
       variable = "aws:SourceArn"
-      values = ["arn:aws:cloudtrail:${data.aws_region.current.region}:${var.account_id}:trail/landing-zone-trail"]
+      values   = ["arn:aws:cloudtrail:${data.aws_region.current.region}:${var.account_id}:trail/landing-zone-trail"]
 
     }
   }
@@ -58,30 +57,65 @@ data "aws_iam_policy_document" "allow_cloudtrail_access" {
   statement {
     effect = "Allow"
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = ["cloudtrail.amazonaws.com"]
     }
-    actions = ["s3:PutObject" ]
+    actions   = ["s3:PutObject"]
     resources = ["arn:aws:s3:::${aws_s3_bucket.cloud_trail_bucket.id}/AWSLogs/${var.account_id}/*"]
     condition {
-      test = "StringEquals"
+      test     = "StringEquals"
       variable = "s3:x-amz-server-side-encryption"
-      values = ["aws:kms"]
+      values   = ["aws:kms"]
     }
     condition {
-      test = "StringEquals"
+      test     = "StringEquals"
       variable = "aws:SourceArn"
-      values = [ "arn:aws:cloudtrail:${data.aws_region.current.region}:${var.account_id}:trail/landing-zone-trail" ]
+      values   = ["arn:aws:cloudtrail:${data.aws_region.current.region}:${var.account_id}:trail/landing-zone-trail"]
+    }
+  }
+}
+resource "aws_cloudwatch_log_group" "cloudtrail_logs" {
+  name              = "/aws/cloudtrail/landing-zone"
+  retention_in_days = 365
+}
+
+resource "aws_iam_role" "cloudwatch_role" {
+  name               = "cloudwatch_role"
+  assume_role_policy = data.aws_iam_policy_document.cloudtrail_trust_policy.json
+}
+data "aws_iam_policy_document" "cloudwatch_permissions" {
+  statement {
+    effect    = "Allow"
+    resources = ["${aws_cloudwatch_log_group.cloudtrail_logs.arn}:*"]
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+  }
+}
+data "aws_iam_policy_document" "cloudtrail_trust_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["cloudtrail.amazonaws.com"]
     }
   }
 }
 
+resource "aws_iam_role_policy" "cloudwatch_policy" {
+  name   = "cloudwatch_policy"
+  policy = data.aws_iam_policy_document.cloudwatch_permissions.json
+  role   = aws_iam_role.cloudwatch_role.id
+}
 resource "aws_cloudtrail" "landing_zone_trail" {
-  depends_on = [ aws_s3_bucket_policy.cloud_trail_s3_policy ]
-  name = "landing-zone-trail"
-  s3_bucket_name = aws_s3_bucket.cloud_trail_bucket.id
-  is_multi_region_trail = true
+  depends_on                    = [aws_s3_bucket_policy.cloud_trail_s3_policy]
+  name                          = "landing-zone-trail"
+  s3_bucket_name                = aws_s3_bucket.cloud_trail_bucket.id
+  is_multi_region_trail         = true
   include_global_service_events = true
-  enable_log_file_validation = true
-  kms_key_id = var.kms_key_arn
+  enable_log_file_validation    = true
+  kms_key_id                    = var.kms_key_arn
+  cloud_watch_logs_group_arn    = "${aws_cloudwatch_log_group.cloudtrail_logs.arn}:*"
+  cloud_watch_logs_role_arn     = aws_iam_role.cloudwatch_role.arn
 }

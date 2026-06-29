@@ -34,5 +34,5 @@ module "securityhub" {
 
 module "alerting" {
   source = "./modules/alerting"
-  email = "example@hotmail.com"
+  email  = "example@hotmail.com"
 }
