@@ -10,7 +10,7 @@ Built as a root module calling individual child modules, one per security domain
 Career transition from technical support engineering into cloud security
 Wanted to demonstrate hands-on ability rather than just certifications
 Chose AWS because of existing AWS SAA certification and familiarity with the platform
-Deliberately wrote every module from scratch rather than using registry modules — to own every decision
+Deliberately wrote every module from scratch rather than using registry modules,to own every decision
 
 
 ## Architecture
