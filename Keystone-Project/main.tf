@@ -13,7 +13,6 @@ module "kms" {
 
 module "iam" {
   source     = "./modules/iam"
-  name       = ""
   account_id = ""
 }
 
@@ -35,4 +34,5 @@ module "securityhub" {
 module "alerting" {
   source = "./modules/alerting"
   email  = "example@hotmail.com"
+  cloudtrail_log_group_name = module.cloudtrail.log_group_name
 }
