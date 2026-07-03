@@ -32,7 +32,7 @@ module "securityhub" {
 }
 
 module "alerting" {
-  source = "./modules/alerting"
-  email  = "example@hotmail.com"
+  source                    = "./modules/alerting"
+  email                     = "example@hotmail.com"
   cloudtrail_log_group_name = module.cloudtrail.log_group_name
 }
