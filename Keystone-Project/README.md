@@ -10,7 +10,7 @@ The reason I decided to do a project like this is because I'm looking to transit
 
 ## Architecture
 
-![Architecture Diagram](images/SecurelandingZone.drawio.png)
+![Architecture Diagram](images/SecureLandingZone.drawio.png)
 
 I chose to use Terraform because of the ability to be used in hybrid environments, which are becoming more popular. So, even though I don't currently have experience in Azure or GCP, I can use Terraform, and using my knowledge in AWS and Terraform, I can use that to write infrastructure in other cloud environments.
 
