@@ -10,7 +10,7 @@ The reason I decided to do a project like this is because I'm looking to transit
 
 ## Architecture
 
-![Architecture Diagram](images/Securelanding.drawio.png)
+![Architecture Diagram](images/SecurelandingZone.drawio.png)
 
 I chose to use Terraform because of the ability to be used in hybrid environments, which are becoming more popular. So, even though I don't currently have experience in Azure or GCP, I can use Terraform, and using my knowledge in AWS and Terraform, I can use that to write infrastructure in other cloud environments.
 
@@ -86,7 +86,7 @@ No internet gateway or NAT gateway - intentional for this baseline, would be add
 
 No Terraform remote state - local state only, would use S3 backend with DynamoDB locking for a real team deployment
 
-Single account - real enterprise would use AWS Organizations with SCPs enforced at OU level
+Single account - real enterprise would use AWS Organisations with SCPs enforced at OU level
 
 
 ## How to deploy
@@ -106,6 +106,6 @@ The below are things that I plan to add and will add as I continue my journey in
 
 AWS Config rules
 Terraform remote state in S3 with DynamoDB locking
-AWS Organizations and SCPs for multi-account enforcement
+AWS Organisations and SCPs for multi-account enforcement
 Automated remediation - Lambda triggered by GuardDuty findings
 SIEM integration - ship CloudWatch logs to a centralised security platform
